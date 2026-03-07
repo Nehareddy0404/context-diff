@@ -1,4 +1,17 @@
-# Community Guardian
+<div align="center">
+
+![Community Guardian](https://img.shields.io/badge/Community-Guardian-00ff88?style=for-the-badge&logo=shield&logoColor=white&labelColor=0a0f0a)
+
+![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![OpenAI](https://img.shields.io/badge/OpenAI_GPT--3.5-412991?style=flat-square&logo=openai&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white)
+![Node](https://img.shields.io/badge/Node_18+-339933?style=flat-square&logo=node.js&logoColor=white)
+
+**AI-powered neighborhood safety platform with threat radar, scam detection, and predictive forecasting**
+
+</div>
+
+---
 
 **Name:** Neha Suram  
 **Scenario:** 3 — Community Safety & Digital Wellness  
@@ -6,9 +19,9 @@
 
 ---
 
-## How to Run
+## 🚀 How to Run
 
-You'll need Node 18+ and an OpenAI API key.
+We need Node 18+ and an OpenAI API key.
 
 ```bash
 git clone <repo-url>
@@ -28,7 +41,7 @@ npm test -- --watchAll=false
 
 ---
 
-## Tech Stack
+## 🏗️ Tech Stack
 
 | Layer | Tech | Why I chose it |
 |-------|------|---------------|
@@ -42,54 +55,60 @@ I went with a dark cybersecurity theme — JetBrains Mono font, matrix green + c
 
 ---
 
-## What It Does
+## ✨ What It Does
 
-### CRUD + Search
+### 📝 CRUD + Search
 - **Create** — hit "+ Report" to file a new incident (pick type + location)
 - **View** — dashboard shows filtered alerts, safety score, trend chart
 - **Update** — edit any report inline from the Reports tab
 - **Delete** — remove reports (asks for confirmation first)
 - **Search** — filter reports by keyword, location, or type
 
-### AI Features
+### 🤖 AI Features
 The main AI feature is **noise-to-signal filtering** — GPT reads community reports and separates real threats from venting/off-topic posts. Each alert gets a severity level and actionable defense steps.
 
 If the API key is missing or the call fails, everything falls back to rule-based keyword matching. The UI shows a badge so users know when AI wasn't used.
 
 Other AI stuff:
-- **Scam Scanner** — paste a sketchy text/email and get a verdict (SCAM / SUSPICIOUS / LEGIT) with red flags
-- **Threat Forecast** — predicts threat trends for the next 7 days across all locations
-- **AI Chat** — ask the chatbot questions about local safety (it has context about recent incidents)
+- **🔍 Scam Scanner** — paste a sketchy text/email and get a verdict (SCAM / SUSPICIOUS / LEGIT) with red flags
+- **📡 Threat Forecast** — predicts threat trends for the next 7 days across all locations
+- **💬 AI Chat** — ask the chatbot questions about local safety (it has context about recent incidents)
 
 All of these have rule-based fallbacks too.
 
-### Standout Features
-- **Threat Radar** — interactive SVG radar that plots every neighborhood as a node. High-risk areas pulse red, low-risk ones glow green. There's a rotating sweep line and connection lines back to the center hub. Honestly one of the coolest things I built here.
-- **Safety Score** — animated gauge (0-100) per location, weighted by how recent and severe incidents are
-- **7-Day Trend Chart** — bar chart comparing digital vs physical incidents day by day
-- **Emergency Broadcast** — one-tap "I NEED HELP" or "I'M SAFE" buttons that send to all your Safe Circles at once
-- **Elderly Mode** — toggle in the navbar that makes everything bigger and easier to read
-- **Safe Circles** — create groups of trusted contacts and share status updates
+### 🌟 Standout Features
+- **📡 Threat Radar** — interactive SVG radar that plots every neighborhood as a node. High-risk areas pulse red, low-risk ones glow green. There's a rotating sweep line and connection lines back to the center hub
+- **📊 Safety Score** — animated gauge (0-100) per location, weighted by how recent and severe incidents are
+- **📈 7-Day Trend Chart** — bar chart comparing digital vs physical incidents day by day
+- **🚨 Emergency Broadcast** — one-tap "I NEED HELP" or "I'M SAFE" buttons that send to all your Safe Circles at once
+- **👁️ Elderly Mode** — toggle in the navbar that makes everything bigger and easier to read
+- **🔒 Safe Circles** — create groups of trusted contacts and share status updates
 
 ---
 
-## AI Disclosure
+## 🤖 AI Disclosure
 
-- **Did I use AI?** Yes, I used Claude to help with development
-- **How I verified:** I tested everything manually in the browser and wrote unit tests. When the AI suggested something that didn't work or wasn't clean, I rewrote it
-- **Something I rejected:** The AI initially put all helper functions inside the React component which would cause re-renders. I pulled them out into `helpers.js` instead
+> **Did I use AI?** Yes, I used Claude to help with development  
+> **How I verified:** I tested everything manually in the browser and wrote unit tests. When the AI suggested something that didn't work or wasn't clean, I rewrote it  
+> **Something I rejected:** The AI initially put all helper functions inside the React component which would cause re-renders. I pulled them out into `helpers.js` instead
 
 ---
 
-## Tradeoffs
+## ⚖️ Tradeoffs
 
-### What I skipped
+<details>
+<summary><b>What I skipped</b></summary>
+
 - Real encryption (Safe Circles just shows "encrypted" badges)
 - Database / persistence (state resets on refresh)
 - Login / auth system
 - Actual geolocation (using dropdowns instead)
 
-### What I'd add with more time
+</details>
+
+<details>
+<summary><b>What I'd add with more time</b></summary>
+
 - PostgreSQL backend so data persists
 - Real E2E encryption with Web Crypto API
 - Push notifications for new alerts
@@ -97,14 +116,20 @@ All of these have rule-based fallbacks too.
 - Upvote system so the community can verify reports
 - PWA support for offline use
 
-### Known issues
+</details>
+
+<details>
+<summary><b>Known issues</b></summary>
+
 - Data resets on refresh (no backend)
 - AI features need a valid OpenAI key (fallbacks work fine without one)
 - Encryption is simulated, not real
 
+</details>
+
 ---
 
-## Project Structure
+## 📁 Project Structure
 ```
 community-guardian/
 ├── public/
@@ -126,11 +151,19 @@ community-guardian/
 
 ---
 
-## How This Addresses the Success Metrics
+## 📊 Success Metrics
 
 | Metric | What I did |
 |--------|-----------|
-| Anxiety Reduction | Calm language, safety scores, action checklists — not trying to scare anyone |
-| Contextual Relevance | Filter by location, severity-based alerts, weekly trends |
-| Trust & Privacy | API keys in .env (gitignored), no real user data collected |
-| AI Application | Summarization, scam detection, forecasting, chat — all with fallbacks |
+| 🧘 **Anxiety Reduction** | Calm language, safety scores, action checklists — not trying to scare anyone |
+| 🎯 **Contextual Relevance** | Filter by location, severity-based alerts, weekly trends |
+| 🔐 **Trust & Privacy** | API keys in .env (gitignored), no real user data collected |
+| 🧠 **AI Application** | Summarization, scam detection, forecasting, chat — all with fallbacks |
+
+---
+
+<div align="center">
+
+Made with 💚 in Buffalo, NY
+
+</div>
