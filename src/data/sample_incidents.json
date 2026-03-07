@@ -1,0 +1,177 @@
+[
+  {
+    "id": 1,
+    "type": "digital",
+    "raw": "Phishing emails targeting KeyBank customers in Elmwood Village area — do not click links claiming account suspension",
+    "location": "Elmwood Village",
+    "date": "2026-03-03"
+  },
+  {
+    "id": 2,
+    "type": "physical",
+    "raw": "Car break-ins reported on Elmwood Ave between Forest and Bird — lock your vehicles",
+    "location": "Elmwood Village",
+    "date": "2026-03-04"
+  },
+  {
+    "id": 3,
+    "type": "digital",
+    "raw": "Data breach at local UB Health clinic — patient records may be compromised",
+    "location": "University Heights",
+    "date": "2026-03-04"
+  },
+  {
+    "id": 4,
+    "type": "digital",
+    "raw": "Smishing texts posing as NFTA Metro Rail pass renewal — fake link steals payment info",
+    "location": "Canalside",
+    "date": "2026-03-05"
+  },
+  {
+    "id": 5,
+    "type": "physical",
+    "raw": "Porch pirate activity increasing on Hertel Ave — packages stolen from doorsteps",
+    "location": "Hertel Ave",
+    "date": "2026-03-05"
+  },
+  {
+    "id": 6,
+    "type": "digital",
+    "raw": "Fake Craigslist rental listings for apartments on Allen St — scammer requesting wire transfers",
+    "location": "Allentown",
+    "date": "2026-03-05"
+  },
+  {
+    "id": 7,
+    "type": "physical",
+    "raw": "OMG the potholes on Delaware are ridiculous this year",
+    "location": "Delaware District",
+    "date": "2026-03-03"
+  },
+  {
+    "id": 8,
+    "type": "digital",
+    "raw": "Warning: deepfake video scam targeting UB students via social media DMs",
+    "location": "University Heights",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 9,
+    "type": "physical",
+    "raw": "Suspicious person knocking on doors on Abbott Rd claiming to be from National Grid",
+    "location": "South Buffalo",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 10,
+    "type": "digital",
+    "raw": "Ransomware attack hits small business on Hertel — encrypted all customer data",
+    "location": "Hertel Ave",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 11,
+    "type": "physical",
+    "raw": "LOL anyone else love the new coffee shop on Grant St?",
+    "location": "Black Rock",
+    "date": "2026-03-04"
+  },
+  {
+    "id": 12,
+    "type": "digital",
+    "raw": "Compromised WiFi network detected at Canalside public hotspot — use VPN",
+    "location": "Canalside",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 13,
+    "type": "physical",
+    "raw": "Catalytic converter thefts spiking in North Buffalo — Toyota and Honda vehicles targeted",
+    "location": "North Buffalo",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 14,
+    "type": "digital",
+    "raw": "Heads up: fake charity scam going around Larkinville asking for crypto donations",
+    "location": "Larkinville",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 15,
+    "type": "physical",
+    "raw": "Broken streetlights on Seneca St creating unsafe walking conditions at night",
+    "location": "South Buffalo",
+    "date": "2026-03-05"
+  },
+  {
+    "id": 16,
+    "type": "digital",
+    "raw": "Phishing attack targeting M&T Bank mobile app users — spoofed login page",
+    "location": "North Buffalo",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 17,
+    "type": "physical",
+    "raw": "Multiple car windows smashed on Franklin St overnight",
+    "location": "Allentown",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 18,
+    "type": "digital",
+    "raw": "Scam calls impersonating Buffalo Police requesting payment for fake warrants",
+    "location": "South Buffalo",
+    "date": "2026-03-04"
+  },
+  {
+    "id": 19,
+    "type": "physical",
+    "raw": "Suspicious package left near Larkin Square — area was temporarily evacuated",
+    "location": "Larkinville",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 20,
+    "type": "digital",
+    "raw": "Instagram account hacking wave — several Elmwood Village business pages compromised",
+    "location": "Elmwood Village",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 21,
+    "type": "physical",
+    "raw": "Hit and run incident on Delaware Ave near Gates Circle — seeking dashcam footage",
+    "location": "Delaware District",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 22,
+    "type": "digital",
+    "raw": "Warning: fake Buffalo Bills ticket websites active before draft events",
+    "location": "Canalside",
+    "date": "2026-03-03"
+  },
+  {
+    "id": 23,
+    "type": "physical",
+    "raw": "Best pizza recommendation in Black Rock? Off topic but curious",
+    "location": "Black Rock",
+    "date": "2026-03-06"
+  },
+  {
+    "id": 24,
+    "type": "digital",
+    "raw": "Compromised UB student email accounts being used to send phishing links campus-wide",
+    "location": "University Heights",
+    "date": "2026-03-07"
+  },
+  {
+    "id": 25,
+    "type": "physical",
+    "raw": "Graffiti and vandalism reported along the Riverwalk trail near Black Rock Canal",
+    "location": "Black Rock",
+    "date": "2026-03-07"
+  }
+]
