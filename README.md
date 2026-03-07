@@ -1,11 +1,12 @@
 <div align="center">
 
-![Community Guardian](https://img.shields.io/badge/Community-Guardian-00ff88?style=for-the-badge&logo=shield&logoColor=white&labelColor=0a0f0a)
+# 🛡️ Community Guardian
 
-![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black)
-![OpenAI](https://img.shields.io/badge/OpenAI_GPT--3.5-412991?style=flat-square&logo=openai&logoColor=white)
-![Jest](https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white)
-![Node](https://img.shields.io/badge/Node_18+-339933?style=flat-square&logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
+![Jest](https://img.shields.io/badge/Tested_with_Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Node](https://img.shields.io/badge/Node_18+-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 **AI-powered neighborhood safety platform with threat radar, scam detection, and predictive forecasting**
 
