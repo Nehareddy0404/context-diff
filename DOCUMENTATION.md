@@ -22,7 +22,7 @@ I designed for three specific user groups:
 
 ## Technical Stack Decisions
 
-### React 19 (Create React App)
+### React 19 (To create React App)
 I went with CRA because it's the fastest way to get a working React app with zero config. For a timed challenge, spending time on build tooling didn't make sense. React's component model also made it easy to break the UI into tabs and reusable pieces.
 
 ### OpenAI GPT-3.5 Turbo
@@ -146,7 +146,30 @@ Trusted contact groups with status updates. Messages show an "encrypted" badge. 
 - `ruleBasedScamCheck` — catches obvious scam patterns, passes clean messages
 - `calcSafetyScore` — high score for safe areas, lower score for incident-heavy areas
 
-All tests pass. I focused testing on the logic layer (helpers.js) since that's where bugs would cause the most damage.
+All tests passed. I focused testing on the logic layer (helpers.js) since that's where bugs would cause the most damage.
+
+## Tradeoffs & Decisions
+
+### Client-side only (no backend)
+I skipped building a backend entirely. Data lives in React state and resets on refresh. This let me spend all my time on the AI features and UI instead of wiring up Express + Postgres. For a demo, it works — but production would obviously need persistence.
+
+### GPT-3.5 instead of GPT-4
+GPT-4 would give better analysis, but 3.5 is 10x cheaper and responds faster. For summarizing community reports and checking scam texts, the quality gap isn't big enough to justify the cost and latency.
+
+### No real encryption
+Safe Circles shows "encrypted" badges but it's not actually encrypted. Real E2E encryption with Web Crypto API would take significant time to implement properly. I flagged this clearly in the UI rather than pretending it's secure.
+
+### No authentication
+There's no login system. Every user sees the same data. I prioritized the AI and visualization features over auth since the demo is single-user anyway.
+
+### Inline styles instead of CSS framework
+Tailwind or styled-components would scale better, but inline styles with a shared token file were faster to set up and kept theming dead simple for a single-component app.
+
+### Rule-based fallbacks over graceful degradation
+Instead of just showing "AI unavailable" errors, I built full rule-based alternatives for every AI feature. This means the app is fully functional even without an API key — judges can test everything immediately.
+
+### Dropdown locations instead of geolocation
+Real GPS-based location detection would be better UX, but the Geolocation API needs HTTPS and user permissions which add friction in a demo. Dropdowns are instant and reliable.
 
 ---
 
