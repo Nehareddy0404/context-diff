@@ -84,7 +84,7 @@ export default function App() {
   const [scamLoad, setScamLoad] = useState(false);
 
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMsgs, setChatMsgs] = useState([{ role: "assistant", text: "Hello! I'm your Community Guardian AI. Ask me anything about safety in your area. 🛡" }]);
+  const [chatMsgs, setChatMsgs] = useState([{ role: "assistant", text: "Hello! I'm your GuardianAI assistant. Ask me anything about safety in your area. 🛡" }]);
   const [chatIn, setChatIn] = useState("");
   const [chatLoad, setChatLoad] = useState(false);
 
@@ -222,7 +222,7 @@ export default function App() {
       <div style={{ background: "rgba(8,12,24,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid " + colors.border, padding: "0 24px", display: "flex", alignItems: "center", height: elderly ? 72 : 60, position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, background: colors.shield, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, animation: "glow 3s ease infinite" }}>🛡</div>
-          <span style={{ fontWeight: 900, fontSize: elderly ? 20 : 17, fontFamily: "'JetBrains Mono',monospace", color: colors.green }}>Guardian</span>
+          <span style={{ fontWeight: 900, fontSize: elderly ? 20 : 17, fontFamily: "'JetBrains Mono',monospace", color: colors.green }}>GuardianAI</span>
           <span style={{ background: colors.greenBg, color: colors.green, fontSize: 9, padding: "2px 8px", borderRadius: 20, fontWeight: 700, border: "1px solid rgba(0,255,136,0.2)", fontFamily: "'JetBrains Mono',monospace", letterSpacing: 1 }}>SECURE</span>
         </div>
 
@@ -268,7 +268,7 @@ export default function App() {
 
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div style={{ display: "inline-block", background: colors.greenBg, border: "1px solid rgba(0,255,136,0.2)", borderRadius: 30, padding: "5px 16px", fontSize: 11, color: colors.green, marginBottom: 14, fontWeight: 700, fontFamily: "'JetBrains Mono',monospace", letterSpacing: 1 }}>◈ AI-POWERED THREAT INTELLIGENCE</div>
-            <h1 style={{ fontSize: elderly ? 44 : 40, fontWeight: 900, margin: "0 0 10px", background: "linear-gradient(135deg, #00ff88 0%, #00e5ff 50%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "'Inter',sans-serif" }}>Community Guardian</h1>
+            <h1 style={{ fontSize: elderly ? 44 : 40, fontWeight: 900, margin: "0 0 10px", background: "linear-gradient(135deg, #00ff88 0%, #00e5ff 50%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "'Inter',sans-serif" }}>GuardianAI</h1>
             <p style={{ color: colors.textDim, fontSize: elderly ? 16 : 14, maxWidth: 500, margin: "0 auto" }}>AI-powered noise filtering delivers calm, verified, actionable safety intelligence.</p>
           </div>
 
@@ -529,7 +529,7 @@ export default function App() {
               })}
               <circle cx="350" cy="200" r="12" fill="rgba(0,255,136,0.15)" stroke={colors.green} strokeWidth="2" style={{ animation: "pulse 2s ease infinite" }} />
               <circle cx="350" cy="200" r="4" fill={colors.green} />
-              <text x="350" y="222" textAnchor="middle" fill={colors.green} fontSize="8" fontWeight="700" fontFamily="'JetBrains Mono',monospace">GUARDIAN HQ</text>
+              <text x="350" y="222" textAnchor="middle" fill={colors.green} fontSize="8" fontWeight="700" fontFamily="'JetBrains Mono',monospace">GUARDIANAI HQ</text>
             </svg>
             <style>{"@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"}</style>
           </div>

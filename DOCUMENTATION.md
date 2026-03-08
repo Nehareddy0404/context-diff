@@ -1,8 +1,8 @@
-# Design Documentation — Community Guardian
+# Design Documentation — GuardianAI
 
 ## 1. Project Overview
 
-Community Guardian is a neighborhood safety platform built for the "Community Safety & Digital Wellness" case study. The core problem: people are overwhelmed by scattered safety information across news sites and social media, leading to either alert fatigue or unnecessary anxiety.
+GuardianAI is a neighborhood safety platform built for the "Community Safety & Digital Wellness" case study. The core problem: people are overwhelmed by scattered safety information across news sites and social media, leading to either alert fatigue or unnecessary anxiety.
 
 This app solves that by aggregating local safety data and using AI to filter noise from signal — turning messy community reports into calm, actionable safety digests.
 
