@@ -18,6 +18,9 @@
 **Scenario Chosen:** 3 — Community Safety & Digital Wellness  
 **Estimated Time Spent:** ~5 hours  
 
+### 🎥 Demo Video
+[![Watch the demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/a5cmX1ZEMyU)
+
 ---
 
 ## 🚀 Quick Start
