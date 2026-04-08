@@ -1,50 +1,44 @@
-# Context Diff — Git for AI Context
+# What I Built and Why
 
-**Neha Suram** · [nehasuram04@gmail.com](mailto:nehasuram04@gmail.com) · [GitHub](https://github.com/Nehareddy0404/context-diff)
+**Neha Suram** · nehasuram04@gmail.com · github.com/Nehareddy0404/context-diff
 
 ---
 
-## The Problem
+I keep a running note on my phone called "things my AI should know about me." It has stuff like: I want concise answers, I'm working in React right now, I care about accessibility, I don't like when it says "Great question!" before every response.
 
-Every time I open a new AI chat, I start over. I re-explain that I prefer dark mode, that I'm working on a React project, that I like concise answers with code examples. The AI has no memory of who I am — and honestly, that's not just annoying, it's slow. The model wastes its first few seconds figuring me out instead of actually helping me. That's a TTFT problem at its core.
+The problem is — none of that actually makes it into my AI conversations. Every new chat starts from zero. I re-explain myself, the AI rediscovers my preferences, and we waste the first minute just getting back to baseline. That minute is real. In TTFT terms, it's the difference between a 2.8 second response and a 0.4 second one.
 
-## My Idea
+So I built **Context Diff**.
 
-What if we treated personal AI context the way developers treat code? Version it. Branch it. Diff it.
+The core idea is dead simple: treat personal AI context like source code. Version it. Branch it. Diff it. If developers have had Git for 20 years and it changed everything about how we collaborate on code — why don't we have the same thing for the data that makes AI personal?
 
-Your context changes over time — you pick up new tools, your goals shift, your communication preferences evolve. A flat profile can't capture that. But a Git-like model can. Your work AI gets a `work-pacific` branch. Your personal AI stays on `main`. They don't leak into each other.
+## What it actually does
 
-## What I Built
+It's a React app with 9 hand-written context snapshots across 2 branches, simulating about two months of real life — applying to an internship, picking up new tools, shifting goals, starting a new job.
 
-I built a React app that demonstrates this concept end-to-end. It has 9 hand-written context snapshots across 2 branches, simulating about 2 months of real context evolution.
+There are six views:
+- **Timeline** — a commit log of context changes  
+- **Diff Engine** — compare any two snapshots and see exactly what shifted  
+- **Branch Manager** — your work context and personal context live on separate branches  
+- **Context Editor** — browse entries with blame annotations (who changed what, when)  
+- **TTFT Dashboard** — visualizes how pre-loaded context cuts response time by 87%  
+- **Search** — full-text search across your entire context history  
 
-**Six views, each tied to something Pacific cares about:**
+## Three things I didn't see anyone else building
 
-| Feature | Why it matters |
-|---------|---------------|
-| **Timeline** — snapshot history | You can inspect exactly what your AI knows about you |
-| **Diff Engine** — side-by-side comparison | See what changed between any two points in time |
-| **Branch Manager** + conflict detection | Keep work context separate from personal context |
-| **Context Editor** + semantic blame | Trace *why* a piece of context changed — useful for agents |
-| **TTFT Dashboard** | Shows how pre-loaded context cuts response time by 87% |
-| **Search** | "When did I first mention Pacific?" — search across all history |
+**Semantic Blame.** Every context entry has provenance. You can trace when it was created, what conversation triggered it, and whether it was set by you or inferred by the system. This matters for AI agents that need to trust the context they're using — you can't just blindly load data, you need to know where it came from.
 
-**Three features I'm especially proud of:**
-- **Semantic Blame** — like `git blame` but for your AI context. Every entry is traceable.
-- **Conflict Detection** — catches when your work branch says "professional tone" but personal says "casual." Important before any merge.
-- **Permission Levels** — some context is shared, some is branch-only, some is private. Your therapy notes shouldn't reach your work AI.
+**Conflict Detection.** When you have a work branch and a personal branch, values will eventually contradict. Your work profile says you communicate "professionally, async-first" while your personal one says "casually, in-person." I built a system that catches these automatically and flags them with severity — because if you ever do cross-branch retrieval, you need to know about contradictions first.
 
-## Why Pacific
+**Permission Levels.** This is the one I think matters most. Not all context should be available everywhere. I tagged each category as shared, branch-only, private, or inherited. Your employer shouldn't see your personal beliefs. Your personal AI shouldn't know your work standup notes. Permission-scoped context isn't a nice-to-have — it's a trust requirement.
 
-I think the next wave of personal AI isn't about better models — it's about better context management. Whoever figures out how to version, scope, and permission personal context will build something people actually trust. Pacific is working on exactly this problem space, and I want to be part of it.
+## Why Pacific specifically
 
-My TTFT model shows that branched + cached context drops response time from 2.8s to 0.4s. That's not made up — it's grounded in how much "getting to know you" overhead you eliminate when the AI already has your context loaded.
+I've been thinking a lot about what makes AI feel personal, and it almost always comes down to context — having the right information loaded at the right time. Pacific is building in exactly this space, and the problems you're solving (search relevance, TTFT, context retrieval) are the same ones I was drawn to when I started this project.
 
-## Tech Stack
+The TTFT numbers in my dashboard aren't arbitrary. Pre-loaded, branched context eliminates the "getting to know you" overhead entirely. The AI starts helping immediately because it already has what it needs. That's the experience Pacific is building toward, and I want to help make it real.
 
-React 19, Vite, Vitest (28 tests), vanilla CSS (~1800 lines), no backend. Everything runs client-side with synthetic data.
-
-## How to Run
+## How to run
 
 ```
 git clone https://github.com/Nehareddy0404/context-diff.git
@@ -52,8 +46,8 @@ cd context-diff
 npm install && npm run dev
 ```
 
-Open http://localhost:5173
+Open http://localhost:5173 · Tests: `npm test` (28 passing)
 
 ---
 
-*This project started as a submission for Pacific, but it's also how I think about AI every day — context is what makes the difference between a generic chatbot and an AI that actually knows you.*
+React 19, Vite, Vitest, vanilla CSS. No backend, no API keys, no setup friction.
