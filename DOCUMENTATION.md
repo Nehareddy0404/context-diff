@@ -1,293 +1,345 @@
-# Design Documentation — GuardianAI
+# Design Documentation — Context Diff
 
 ## 1. Project Overview
 
-GuardianAI is a neighborhood safety platform focused on community safety and digital wellness. The core problem: people are overwhelmed by scattered safety information across news sites and social media, leading to either alert fatigue or unnecessary anxiety.
+Context Diff is a version control system for personal AI context. The core insight: your AI assistant forgets you after every conversation. You re-explain your preferences, projects, and communication style hundreds of times. This is the TTFT (Time to First Token) problem at its root — not a model speed issue, but a **context loading** issue.
 
-This app solves that by aggregating local safety data and using AI to filter noise from signal — turning messy community reports into calm, actionable safety digests.
+Context Diff solves this by treating personal context like source code. You can version it (snapshots), branch it (work vs. personal), diff it (what changed?), and search it (when did I start caring about X?).
 
-The app is built in React, uses OpenAI GPT-3.5 for AI features, and is themed around cybersecurity with a dark mode interface. Every AI feature has a complete rule-based fallback, so the app works fully without an API key.
+The app is built with React 19 + Vite, uses a vanilla CSS design system with glassmorphism and animations, and ships with 9 hand-written context snapshots across 2 branches simulating 2 months of personal AI context evolution.
 
 ---
 
 ## 2. Target Audience
 
-I designed for three specific user groups. Here's how each is served:
+### AI Power Users
+**Need:** Track how their preferences and context evolve across hundreds of AI conversations  
+**Solution:** Timeline view shows chronological snapshot history. Diff View lets them compare any two points in time to see exactly what changed. Search lets them find when a specific topic first appeared.
 
-### Neighborhood Groups
-**Need:** Track local trends without social media toxicity  
-**Solution:** The Dashboard tab filters out noise (venting, off-topic posts) and shows only verified incidents with severity levels. The 7-Day Trend Chart tracks patterns. The Threat Radar gives a visual overview of all neighborhoods at once.
+### Knowledge Workers
+**Need:** Separate AI context for work vs. personal vs. side projects  
+**Solution:** Branch Manager maintains independent context tracks. Your work AI doesn't leak personal details, and your personal AI doesn't get cluttered with work jargon. Like Git branches but for who you are.
 
-### Remote Workers
-**Need:** Local network security and home safety awareness  
-**Solution:** The Scam Scanner lets them paste suspicious emails/texts for instant analysis. Digital threat alerts cover phishing, data breaches, and ransomware. The AI Chat answers specific security questions.
-
-### Elderly Users
-**Need:** Simplified, non-scary alerts about scams and hazards  
-**Solution:** The Elderly Mode toggle (👁️ A+ button in navbar) increases all font sizes across the app for readability. The language throughout is calm and empowering — never alarming. Action checklists give clear, simple steps.
+### AI Product Builders
+**Need:** Understand the impact of context on response quality and TTFT  
+**Solution:** TTFT Dashboard visualizes how different context strategies (none, basic, full, branched, cached) reduce time to first token. Makes the business case for context management tangible.
 
 ---
 
 ## 3. Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│              User Interface                  │
-│              App.jsx (640 lines)             │
-│                                              │
-│   ┌──────────┐  ┌───────────┐  ┌──────────┐ │
-│   │Dashboard │  │Threat     │  │Scam      │ │
-│   │Tab       │  │Radar Tab  │  │Scanner   │ │
-│   ├──────────┤  ├───────────┤  ├──────────┤ │
-│   │Safe      │  │Reports    │  │Locations │ │
-│   │Circles   │  │Tab (CRUD) │  │Tab       │ │
-│   └──────────┘  └───────────┘  └──────────┘ │
-│                                              │
-│   ┌──────────────────┐  ┌─────────────────┐  │
-│   │Floating AI Chat  │  │Elderly Mode     │  │
-│   └──────────────────┘  └─────────────────┘  │
-└──────────────┬──────────────────┬────────────┘
-               │                  │
-    ┌──────────▼──────────┐  ┌───▼────────────┐
-    │   helpers.js        │  │   styles.js    │
-    │                     │  │                │
-    │ • getAIDigest()     │  │ • colors       │
-    │ • detectScamAI()    │  │ • glass        │
-    │ • getAIForecast()   │  │ • input/label  │
-    │ • askAssistant()    │  │ • sevConfig    │
-    │ • ruleBasedFilter() │  │ • elderlyMode  │
-    │ • ruleBasedScamChk()│  └────────────────┘
-    │ • ruleBasedForecast│
-    │ • calcSafetyScore() │
-    │ • getTrendData()    │
-    └──────────┬──────────┘
-               │
-    ┌──────────▼──────────┐
-    │  sample_incidents   │
-    │  .json (25 records) │
-    └─────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                     App.jsx (Layout)                       │
+│  ┌──────────┐  ┌────────────────────────────────────────┐  │
+│  │ Sidebar  │  │           Content Panel                │  │
+│  │          │  │                                        │  │
+│  │ • Views  │  │  Renders one of 6 views based on       │  │
+│  │ • Branch │  │  activeView state                      │  │
+│  │   select │  │                                        │  │
+│  └──────────┘  └──────────┬─────────────────────────────┘  │
+│                           │                                │
+│  ┌────────────────────────▼────────────────────────────┐   │
+│  │              6 View Components                      │   │
+│  │                                                     │   │
+│  │  Timeline │ DiffView │ BranchManager │ ContextEditor │  │
+│  │  TTFTDashboard │ SearchPanel                        │   │
+│  └────────────┬───────────────────────┬────────────────┘   │
+│               │                       │                    │
+│  ┌────────────▼────────────┐  ┌───────▼───────────────┐   │
+│  │   utils/diffEngine.js   │  │  data/sampleData.js   │   │
+│  │                         │  │                       │   │
+│  │ • computeDiff()         │  │ • 2 branches          │   │
+│  │ • computeStats()        │  │ • 9 snapshots         │   │
+│  │ • searchHistory()       │  │ • 8 context categories│   │
+│  │ • computeTTFT()         │  │ • TTFT benchmarks     │   │
+│  │ • getContextSize()      │  │ • Category labels     │   │
+│  │ • estimateTokens()      │  └───────────────────────┘   │
+│  │ • formatTime/Full()     │                               │
+│  │ • groupByCategory()     │                               │
+│  └─────────────────────────┘                               │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ### Why this structure?
-- **App.jsx** — Single component handles all UI. For a 5-hour challenge, splitting into 15 component files adds overhead without benefit. Everything is in tabs, easy to navigate.
-- **helpers.js** — All business logic extracted here. AI calls, rule-based fallbacks, scoring, trend calculation. This makes the logic testable independent of React.
-- **styles.js** — Design tokens (colors, glassmorphism, input styles) in one file. Change `colors.green` once, it updates everywhere.
-- **sample_incidents.json** — Synthetic data layer. 25 records, each with id, type, raw text, location, and date.
 
-### Data flow
-1. App loads 25 incidents from JSON into React state
-2. User selects a location → safety score and trend chart update
-3. User clicks "Analyze Threats" → app calls OpenAI API (or falls back to rule-based filter)
-4. Filtered results render as cards with severity badges, summaries, and action steps
-5. User can create/edit/delete/search reports — all update the same state array
+- **App.jsx (247 lines)** — Layout shell with sidebar and content panel. State management for active view, active branch, and snapshot selection (A/B for diffing). Small and focused.
+- **6 Components** — Each view is a self-contained component. Timeline handles snapshot display, DiffView handles comparison rendering, etc. Clean separation of concerns.
+- **diffEngine.js (206 lines)** — All computation extracted into pure functions. Diff algorithm, search, TTFT simulation, formatting. This is the testable core of the application.
+- **sampleData.js** — Rich synthetic dataset. 9 snapshots with realistic context evolution, 2 branches with fork relationships, 8 context categories.
+- **index.css (1554 lines)** — Complete design system. Design tokens, component styles, animations, responsive behavior. Everything uses CSS custom properties for consistency.
+
+### State Management
+
+```
+App state:
+  activeView     → which panel to render (timeline | diff | branches | context | ttft | search)
+  activeBranch   → which branch is selected (main | work-pacific)
+  selectedA      → snapshot ID for diff base
+  selectedB      → snapshot ID for diff compare
+```
+
+No external state management needed. React's `useState` + `useMemo` + `useCallback` handles everything cleanly for this scope.
 
 ---
 
 ## 4. Design Choices
 
-### Cybersecurity Theme
-- **Colors:** Dark background (#0a0f0a), matrix green (#00ff88), cyan (#00e5ff), purple (#a855f7)
-- **Typography:** JetBrains Mono monospace font — gives a "terminal" feel
-- **Cards:** Glassmorphism with semi-transparent backgrounds, subtle borders, backdrop blur
-- **Background effects:** Binary rain (0s and 1s falling), hex grid pattern, floating security icons (🔒🛡️), circuit board traces with SVG, scan-line animation
-- **Why:** The theme reinforces the security/safety purpose of the app. Users instantly understand this is a security tool.
+### The Git Metaphor
+The entire UI is built around the metaphor of Git — a tool developers already understand deeply. This makes the concept of "versioned personal AI context" instantly graspable:
+- **Snapshots** = commits (a point-in-time capture of your context)
+- **Branches** = separate context tracks (work, personal, side project)
+- **Diff** = comparing two snapshots to see what changed
+- **Timeline** = commit log (chronological history)
 
-### Calm, Empowering Tone
-- Never says "DANGER" or "WARNING" in alarming ways
-- Safety scores feel informative, not scary (74/100 reads as "mostly safe")
-- Every alert comes with actionable steps the user can take
-- Noise filtering removes panicky community posts, only showing verified information
-- This directly addresses the **Anxiety Reduction** success metric
+This isn't just aesthetic — it creates a shared vocabulary. When a user sees "branch" they immediately understand isolation and forking. When they see "diff" they expect red/green additions and deletions.
 
-### Elderly-Friendly Mode
-- A single toggle (👁️ A+ in navbar) increases font sizes across every element
-- Bigger buttons, more readable text, higher contrast
-- Serves the elderly target audience directly
+### Dark Mode Design System
+The app uses a 7-layer depth system for backgrounds:
 
-### Location-Based Everything
-- Dashboard, safety score, trend chart — all filtered by selected location
-- 10 Buffalo NY neighborhoods as default locations
-- Users can add custom locations too
-- This addresses the **Contextual Relevance** success metric
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `--bg-deepest` | `#08080C` | Page background, body |
+| `--bg-deep` | `#0D0F14` | Sidebar, header, status bar |
+| `--bg-base` | `#12141A` | Main content area |
+| `--bg-raised` | `#1A1C24` | Cards, panels, form inputs |
+| `--bg-elevated` | `#22242E` | Hover states on raised elements |
+| `--bg-surface` | `#2A2D38` | Scrollbar thumb, badges |
+| `--bg-hover` | `#32353F` | Scrollbar thumb hover |
 
----
+This layering creates natural visual hierarchy without borders. Elements "float" at different depths, guided by glassmorphism (`backdrop-filter: blur(16px)`) and subtle borders (`rgba(255, 255, 255, 0.06)`).
 
-## 5. AI Integration — Detailed Breakdown
+### Typography
+- **Inter** (sans-serif) — UI text, labels, descriptions. Clean and highly readable at small sizes.
+- **JetBrains Mono** (monospace) — Snapshot IDs, context keys, code references, TTFT values. Reinforces the developer-tool aesthetic.
 
-### How AI is used (4 capabilities)
+### Color Semantics
+Colors carry meaning:
+- **Purple (#6C63FF)** — primary brand, main branch, active states
+- **Teal (#00D4AA)** — work context, compare (B) selection
+- **Pink (#FF6B9D)** — tertiary accent, base (A) selection
+- **Green (#2ED573)** — additions in diff
+- **Red (#FF4757)** — deletions in diff
+- **Orange (#FFA502)** — modifications in diff
 
-| Capability | Feature | What the AI does | Fallback |
-|-----------|---------|-----------------|----------|
-| **Summarize** | Dashboard filter | Reads all reports, generates 1-sentence summaries | Keeps original text |
-| **Categorize** | Dashboard filter | Assigns severity (high/medium/low), separates noise from signal | Regex keyword matching |
-| **Extract** | Scam Scanner | Identifies red flags, verdict, confidence from suspicious text | Pattern matching (urgency, financial bait, phishing words) |
-| **Forecast** | Threat Radar | Predicts next 7 days of threats per location | Statistical analysis of incident counts and types |
+Branch colors are consistent everywhere: sidebar chips, timeline nodes, branch graph, search results, status bar. A user always knows which branch they're looking at by color alone.
 
-### Fallback design philosophy
-Instead of showing "AI unavailable" errors, every feature has a **complete rule-based alternative** that produces useful results. The UI shows a clear badge ("Rule-based" vs "AI-powered") so users always know which method was used. This means:
-- Judges can test every feature immediately without an API key
-- The app never breaks if the API is down
-- Users aren't left with zero information if AI fails
-
-### API key handling
-- Key stored in `.env` file as `REACT_APP_OPENAI_KEY`
-- `.env` is in `.gitignore` — never committed
-- `.env.example` contains placeholder text only
-- If key is missing, app silently uses fallbacks
+### Animation Strategy
+Animations serve function, not decoration:
+- **`fadeSlideIn`** — staggered entrance (50ms delay per item) draws attention to new content
+- **`diffLineIn`** — sliding diff lines give a sense of "revealing" changes
+- **TTFT bars** — animated `width` transition (1.2s) with staggered delays creates a "race" effect that makes performance differences visceral
+- **Spring easing** — interactive elements (timeline nodes, branch dots) use `cubic-bezier(0.34, 1.56, 0.64, 1)` for a satisfying overshoot effect on hover/click
+- **Status bar pulse** — subtle breathing animation on the green dot signals "system active"
 
 ---
 
-## 6. Feature Deep Dives
+## 5. Feature Deep Dives
 
-### Threat Radar (standout feature)
-An interactive SVG radar visualization that shows ALL neighborhoods at once:
-- Each neighborhood is a node positioned around a central hub
-- **Node size** scales with incident count
-- **Node color** indicates risk: green (low), amber (medium), red (high)
-- **Pulse rings** animate around medium/high risk areas
-- **Connection lines** from each node to the center hub
-- **Rotating sweep line** like a real radar display
-- **Labels** show location name, report count, and safety score
+### Diff Engine (`diffEngine.js`)
 
-Below the radar: AI Threat Forecast button that generates 7-day predictions, showing overall trend, top risk area, and an AI insight. This combines visual impact with practical predictive value.
+The core algorithm for computing diffs between context snapshots:
 
-### Safety Score Algorithm
 ```
-Base score: 95
-For each incident at the location:
-  - Calculate recency (1.0 for today, 0.2 for 7+ days old)
-  - Determine severity weight:
-      breach/ransomware = 12 points
-      phishing/scam/fake = 8 points
-      other = 5 points
-  - Penalty = severity × recency
-Final score: max(5, min(95, 95 - total_penalty))
+For each category in both snapshots:
+  For each key in the union of both category's keys:
+    if key exists only in B → ADDITION
+    if key exists only in A → DELETION
+    if key exists in both but values differ → MODIFICATION
+    if values are identical → UNCHANGED
 ```
-Displayed as an animated SVG arc gauge with color gradient.
 
-### Emergency Broadcast
-"I NEED HELP" and "I'M SAFE" buttons that work without typing a name (defaults to "EMERGENCY"). One tap sends to ALL Safe Circles simultaneously. Designed for real emergencies where typing isn't practical.
+This produces four arrays: `additions`, `deletions`, `modifications`, `unchanged`. Each item carries the category, key, and value(s) — enabling grouped display in the Diff View.
+
+**Stats computation** calculates:
+- Count of each change type
+- Total changes
+- **Change rate** = total changes / (total changes + unchanged) × 100
+
+This gives a single percentage that captures "how much did the context evolve between these two points?"
+
+### TTFT Model
+
+The TTFT Dashboard visualizes simulated benchmarks:
+
+| Strategy | TTFT (ms) | Reduction |
+|----------|-----------|-----------|
+| Cold Start (no context) | 2847 | baseline |
+| Basic Profile (512 tokens) | 2105 | 26% |
+| Recent Context (2048 tokens) | 1450 | 49% |
+| Full Personal Context (4096 tokens) | 890 | 69% |
+| Branched Context (Work) | 720 | 75% |
+| Cached + Branched | 380 | **87%** |
+
+The model: `TTFT = baseTTFT × (1 - reduction)` where reduction is the sum of:
+- **Context factor** = `min(tokens / 4096, 1) × 0.65` — more context = less wasted prompt tokens for re-discovery
+- **Branch factor** = `0.10` — loading only relevant context eliminates noise
+- **Cache factor** = `0.15` — pre-processed context skips tokenization overhead
+
+These numbers are simulated but grounded in real patterns: the more the AI already knows about you, the less time it spends on "getting to know you" before producing useful output.
+
+### Search Algorithm
+
+Full-text search across all snapshots:
+
+```
+For each snapshot (optionally filtered by branch):
+  For each category → for each key-value pair:
+    If query matches key OR value OR snapshot message:
+      Add to results with metadata (branch, timestamp, matchType)
+```
+
+Results include `matchType` ('key', 'value', or 'message') so the UI can highlight the specific match location. The `highlightMatch` function in the SearchPanel component uses regex splitting to wrap matched substrings in highlight spans.
+
+### Branch Visualization
+
+The Branch Manager renders two complementary views:
+
+1. **Branch Graph** — Horizontal lane diagram showing each branch as a colored line with dots for each snapshot. Fork labels show where branches diverged.
+
+2. **Branch Cards** — Grid of glassmorphism cards with branch-colored top borders. Each shows snapshot count, last activity date, and fork origin. Active branch gets a glow shadow and "ACTIVE" badge.
+
+---
+
+## 6. Data Design
+
+### 9 Synthetic Snapshots, 2 Branches
+
+The data tells a story: a developer named Neha over ~2 months (January 15 – March 15, 2026).
+
+**Main Branch (5 snapshots)**: Core personal evolution
+- `snap-main-01`: Initial context — preferences, first project, basic goals
+- `snap-main-02`: Added key people (Prof. Chen, study group) and schedule
+- `snap-main-03`: Applied to Pacific — new project (context-diff) appears
+- `snap-main-04`: Evolving beliefs about AI personalization
+- `snap-main-05`: Refined communication style, career direction crystallizing
+
+**Work @ Pacific Branch (4 snapshots)**: Professional context fork
+- `snap-work-01`: Forked from main — work preferences, team, projects
+- `snap-work-02`: Onboarding complete — started on context retrieval API
+- `snap-work-03`: Shipped API v1 — 40% TTFT improvement
+- `snap-work-04`: Context caching, permission-aware retrieval
+
+### 8 Context Categories
+Each snapshot contains key-value pairs organized into:
+
+| Category | Icon | What it tracks |
+|----------|------|----------------|
+| Preferences | ⚙️ | Editor, theme, coding style, music |
+| Active Projects | 🚀 | What you're building and their status |
+| Goals | 🎯 | Short-term, learning, career, fitness |
+| Beliefs & Values | 💡 | Philosophy about AI, building, startups |
+| Tech Stack | 🛠️ | Languages, frameworks, tools, interests |
+| Communication Style | 💬 | How you prefer AI to respond |
+| Key People | 👥 | Mentors, colleagues, collaborators |
+| Schedule & Routines | 📅 | Work hours, deadlines, recurring events |
+
+### Why This Data Works
+- **Realistic evolution** — preferences refine, projects advance, beliefs deepen naturally
+- **Branch differentiation** — work context is professional, personal context is holistic
+- **Interesting diffs** — comparing main-01 to main-05 shows meaningful growth (14 entries → 32 entries, 6 categories → 8 categories)
+- **Searchable content** — terms like "Pacific", "TTFT", "React", "Priya" appear in specific snapshots, making search feel real
 
 ---
 
 ## 7. Testing Strategy
 
-7 unit tests in `App.test.js`:
+7 unit tests in `diffEngine.test.js`:
 
 | Test | Type | What it verifies |
 |------|------|-----------------|
-| `ruleBasedFilter` keeps actionable alerts | Happy path | Phishing/breach reports are preserved |
-| `ruleBasedFilter` removes off-topic noise | Edge case | Posts about pizza/coffee are filtered out |
-| `ruleBasedFilter` assigns correct severity | Happy path | "breach" → high, "phishing" → medium |
-| `ruleBasedScamCheck` detects scam patterns | Happy path | Messages with "act now" + "gift card" → SCAM |
-| `ruleBasedScamCheck` handles legit messages | Edge case | Normal text → LEGITIMATE |
-| `calcSafetyScore` returns high for safe area | Happy path | Location with no incidents → 95 |
-| `calcSafetyScore` returns low for risky area | Edge case | Location with recent breaches → lower score |
+| `computeDiff` finds additions | Happy path | Keys in B not in A are additions |
+| `computeDiff` finds deletions | Happy path | Keys in A not in B are deletions |
+| `computeDiff` finds modifications | Happy path | Changed values detected with old + new |
+| `computeDiff` handles identical snapshots | Edge case | No changes when snapshots are the same |
+| `searchHistory` finds matches | Happy path | Query matches in keys, values, messages |
+| `searchHistory` respects branch filter | Edge case | Only returns results from specified branch |
+| `getContextSize` counts entries | Happy path | Correct total across all categories |
 
-**Why I focused on `helpers.js`:** This is where the logic lives. If filtering breaks, users see wrong data. If scoring breaks, safety scores are misleading. UI rendering is less likely to have subtle bugs.
+**Why I focused on `diffEngine.js`:** This is the pure-logic core. If `computeDiff` is wrong, the entire diff view shows incorrect data. If `searchHistory` is broken, search results are misleading. These functions are pure (no side effects, no React), making them ideal unit test targets.
 
 ---
 
-## 8. Data Design
+## 8. Design System Deep Dive
 
-25 synthetic incident reports in `sample_incidents.json`. Each record:
-```json
-{
-  "id": 1,
-  "type": "digital",
-  "raw": "Phishing emails targeting KeyBank customers in Elmwood Village area",
-  "location": "Elmwood Village",
-  "date": "2026-03-03"
-}
-```
+### CSS Custom Properties (Design Tokens)
 
-**Design decisions:**
-- Set in **Buffalo, NY** with real neighborhoods (Elmwood Village, Allentown, North Buffalo, etc.)
-- Mix of **digital** (phishing, ransomware, scams) and **physical** (theft, break-ins, suspicious activity)
-- Some intentionally **noisy** records ("LOL anyone else love the new coffee shop?") to test the AI filter
-- Dates span **5 days** (March 3-7) so the trend chart has meaningful variation
-- All hand-written — no scraped data
+The entire visual system is driven by ~40 CSS custom properties:
+
+- **7 background layers** — create depth without borders
+- **3 accent colors** — with `33` (20%) alpha variants for subtle highlights
+- **6 diff colors** — add/delete/modify with line and background variants
+- **4 text levels** — primary, secondary, tertiary, muted
+- **3 border levels** — subtle, default, strong
+- **4 shadows** — sm, md, lg, glow
+- **2 glass tokens** — background opacity + blur amount
+- **2 font stacks** — sans-serif and monospace
+- **4 radius sizes** — sm to xl
+- **3 transitions** — fast (150ms), normal (250ms), slow (400ms)
+
+Changing a single variable updates the entire app consistently. This is how themes are meant to work.
+
+### Component Styling Patterns
+
+Every interactive element follows the same pattern:
+1. Default state uses `--bg-raised` background + `--glass-border` border
+2. Hover state uses `--bg-elevated` background + `--border-default` border
+3. Active state uses accent color with dim (`33`) background + accent border
+4. Transitions use `var(--duration-fast)` + `var(--ease-out)`
+
+This consistency makes the app feel cohesive and predictable.
 
 ---
 
 ## 9. Tradeoffs & Decisions
 
-### Client-side only — no backend
-I skipped building a backend. Data lives in `useState` and resets on refresh. This freed up time to build 4 AI features, the threat radar, and the cybersecurity theme. For a demo, this works fine. Production would need PostgreSQL + Express.
+### Vite over Create React App
+The old Pulse Guard project used CRA. I switched to Vite for Context Diff because:
+- 10x faster dev server startup
+- Native ESM (no bundling during dev)
+- Better build performance
+- More modern ecosystem (Vitest, etc.)
 
-### GPT-3.5 instead of GPT-4
-3.5 is 10x cheaper and responds faster. For summarizing community posts and checking scam patterns, the quality gap doesn't justify the cost. If this were production, I'd probably use 4 for the scam scanner where accuracy matters more.
+### Vanilla CSS over Tailwind
+Full control over the design system. Tailwind utilities are great for rapid prototyping, but for a deeply themed app with complex animations and glassmorphism, vanilla CSS with custom properties gives more precise control.
 
-### No real encryption
-Safe Circles shows "encrypted" badges but uses no actual encryption. Web Crypto API would take significant time to implement correctly, and the feature was lower priority than AI + visualization. I made this explicit in the UI rather than pretending it's secure.
+### Client-side only (no backend)
+Data resets on refresh. This was intentional: the focus is on the **diff engine, visualization, and UX** — not CRUD persistence. A backend would add complexity without demonstrating the core concept better.
 
-### No authentication
-No login system — everyone sees the same data. I prioritized the AI features and radar visualization over auth infrastructure, since this is a single-user demo.
+### Read-only Context Editor
+The Context Editor shows current state but doesn't allow inline editing. With more time, I'd add editing + auto-snapshot creation. For now, the data evolution is pre-built into the sample data to demonstrate the concept.
 
-### Inline styles over CSS framework
-Tailwind or styled-components would scale better in a larger app, but inline styles with shared tokens in `styles.js` were the fastest path to a consistent theme. For a single-component app with one design system, it works.
-
-### Rule-based fallbacks over "try again" errors
-Instead of showing "AI unavailable, try again later", I built complete rule-based alternatives. More work upfront, but it means the app is 100% functional for anyone testing it, whether they have an API key or not.
-
----
-
-## 10. Security Practices
-
-| Practice | Implementation |
-|----------|---------------|
-| API key protection | `.env` file, listed in `.gitignore`, never committed |
-| `.env.example` | Contains placeholder text `your_openai_api_key_here` only |
-| No real user data | All 25 records are synthetic/hand-written |
-| No tracking | No analytics, no cookies, no external tracking scripts |
-| Client-side only | No backend server storing or transmitting user data |
-| Input sanitization | React's built-in XSS protection via JSX escaping |
+### Simulated TTFT benchmarks
+The TTFT numbers are modeled, not measured from real API calls. The value is in the **visualization and the concept** — showing that context management strategy directly impacts response latency.
 
 ---
 
-## 11. Responsible AI
+## 10. Responsible AI
 
-GuardianAI uses AI to help communities stay safe, but AI must be used responsibly. Here's how we approach ethical considerations, security, and limitations:
+### Why Context Versioning Matters Ethically
+Personal AI context contains sensitive information: your beliefs, relationships, career goals, health concerns. Managing this data responsibly requires:
 
-### Ethical Considerations
-- **Calm, non-alarmist language** — AI-generated summaries and alerts are designed to inform, not frighten. We deliberately avoid fear-based messaging that could cause unnecessary panic in communities.
-- **No profiling or discrimination** — The system reports on incidents by location and type only. It never profiles individuals, demographics, or communities. Safety scores reflect incident data, not judgments about neighborhoods or people.
-- **Human oversight** — AI outputs are clearly labeled. Users always see whether results are "AI-powered" or "Rule-based," empowering them to apply their own judgment rather than blindly trusting automated analysis.
-- **Inclusive design** — Elderly Mode ensures the platform is accessible to older adults who are disproportionately targeted by scams. The app serves all community members, not just tech-savvy users.
+- **Transparency** — Users should see exactly what context their AI has. Context Diff's Context Editor makes this visible and inspectable.
+- **Control** — Users should be able to branch, modify, and delete context. The branching model prevents unwanted context leakage (work AI doesn't see personal therapy notes).
+- **Auditability** — The Timeline and Diff View create an audit trail. Users can see when and how their context changed.
+- **Privacy by design** — Branch isolation means you can share a work branch with a colleague without exposing your personal context.
 
-### Bias Awareness
-- **Training data limitations** — GPT-3.5 may carry biases from its training data. Scam detection and threat categorization could reflect biases in how security incidents are reported in training corpora.
-- **Synthetic test data** — Our 25 sample incidents are hand-written to be balanced across digital and physical threat types, avoiding over-representation of any category.
-- **Rule-based fallbacks as bias mitigation** — When AI is unavailable, the rule-based alternatives use transparent, auditable keyword matching. Users can inspect exactly why a report was categorized a certain way.
-
-### Transparency
-- **Clear AI labeling** — Every AI-generated result displays a visible badge indicating whether it was produced by AI or by rule-based logic. Users are never misled about the source of analysis.
-- **No black-box decisions** — Safety scores use a documented, deterministic algorithm (base score minus recency-weighted severity penalties). The formula is explained in this documentation and produces consistent, reproducible results.
-- **Open source** — The entire codebase is available for inspection on GitHub. Nothing is hidden behind proprietary services.
-
-### Data Privacy & Security
-- **No personal data collection** — The app collects zero personal information. All incident data is synthetic.
-- **No tracking** — No analytics, cookies, or external tracking scripts are used.
-- **API key protection** — OpenAI API keys are stored in `.env` files excluded from version control via `.gitignore`.
-- **Client-side processing** — All data processing happens in the browser. No user data is sent to external servers (except OpenAI API calls for AI features, which contain only incident text — never user information).
-- **Input sanitization** — React's built-in JSX escaping protects against XSS attacks.
-
-### Known Limitations
-- **AI accuracy is not guaranteed** — GPT-3.5 may occasionally miscategorize threats, miss scam patterns, or generate inaccurate forecasts. Users should treat AI outputs as supplementary information, not definitive assessments.
-- **No real-time data** — The app works with static sample data and does not connect to live incident feeds or emergency services.
-- **No encryption** — Safe Circles displays "encrypted" badges for UI demonstration purposes, but does not implement actual end-to-end encryption. Users should not share sensitive personal information through this feature.
-- **Single-user demo** — There is no authentication or authorization system. In a production environment, role-based access control would be essential to prevent misuse.
-- **Geographic scope** — Current data is limited to Buffalo, NY neighborhoods. The system has not been tested for scalability across broader regions.
+### Data Privacy in This Demo
+- All data is synthetic (no real personal information)
+- No external API calls (pure frontend)
+- No analytics or tracking
+- No cookies or local storage persisting user data
 
 ---
 
-## 12. What I'd Build Next
+## 11. What I'd Build Next
 
-If I had more time:
-- **PostgreSQL backend** — persistent data so reports don't disappear on refresh
-- **Real E2E encryption** — Web Crypto API for Safe Circles messages
-- **Push notifications** — alert users when new incidents match their area
-- **Geolocation API** — auto-detect user's neighborhood instead of dropdown
-- **Community voting** — let users upvote/verify reports to crowdsource accuracy
-- **PWA** — offline access and mobile-app-like experience
-- **Admin dashboard** — moderation tools for community managers
+With more time, these are ordered by impact:
+
+1. **Real AI integration** — Import conversation context from ChatGPT/Claude, auto-detect context changes
+2. **Inline editing** — Edit context values directly, auto-create snapshots on save
+3. **Branch merging** — Merge work learnings back into personal context, with conflict resolution
+4. **Export/import** — Portable JSON format for moving context between AI providers
+5. **Backend + auth** — PostgreSQL persistence, user accounts, encrypted storage
+6. **Real TTFT measurement** — Instrument actual API calls to validate the benchmarks
+7. **Collaborative context** — Share branch read-only with teammates or mentors
