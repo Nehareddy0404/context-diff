@@ -50,4 +50,4 @@ Open http://localhost:5173 · Tests: `npm test` (28 passing)
 
 ---
 
-React 19, Vite, Vitest, vanilla CSS. No backend, no API keys, no setup friction.
+
